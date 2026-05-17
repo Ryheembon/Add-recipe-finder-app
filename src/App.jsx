@@ -26,63 +26,95 @@ function App() {
   }
 
   return (
-    <main>
-      <h1>Recipe Finder</h1>
+    <div className="app">
+      <header className="header">
+        <h1>Recipe Finder</h1>
+        <p>Discover meals from around the world. Search by name and explore.</p>
+      </header>
 
-      <form onSubmit={handleSubmit}>
+      <form className="search-form" onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Search for a recipe..."
+          placeholder="Try chicken, pasta, curry..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
         <button type="submit" disabled={loading}>
-          Search
+          {loading ? 'Searching...' : 'Search'}
         </button>
       </form>
 
-      {loading && <p className="status">Loading...</p>}
+      {loading && (
+        <div className="status status--loading">
+          <div className="spinner" />
+          <p>Finding delicious recipes...</p>
+        </div>
+      )}
 
       {searched && !loading && recipes.length === 0 && (
-        <p className="status">No recipes found. Try another search.</p>
+        <p className="status status--empty">
+          No recipes found. Try another search like &quot;beef&quot; or
+          &quot;salmon&quot;.
+        </p>
       )}
 
       {selectedRecipe && (
         <section className="recipe-details">
-          <button type="button" onClick={() => setSelectedRecipe(null)}>
-            Back
+          <button
+            type="button"
+            className="back-btn"
+            onClick={() => setSelectedRecipe(null)}
+          >
+            ← Back to results
           </button>
-          <h2>{selectedRecipe.strMeal}</h2>
-          <img
-            src={selectedRecipe.strMealThumb}
-            alt={selectedRecipe.strMeal}
-          />
-          <p>
-            <strong>Category:</strong> {selectedRecipe.strCategory}
-          </p>
-          <p>
-            <strong>Area:</strong> {selectedRecipe.strArea}
-          </p>
-          <h3>Instructions</h3>
-          <p>{selectedRecipe.strInstructions}</p>
+
+          <div className="details-layout">
+            <div className="details-image">
+              <img
+                src={selectedRecipe.strMealThumb}
+                alt={selectedRecipe.strMeal}
+              />
+            </div>
+
+            <div className="details-content">
+              <h2>{selectedRecipe.strMeal}</h2>
+
+              <div className="badges">
+                <span className="badge badge--category">
+                  {selectedRecipe.strCategory}
+                </span>
+                <span className="badge badge--area">
+                  {selectedRecipe.strArea}
+                </span>
+              </div>
+
+              <h3>Instructions</h3>
+              <p className="instructions">{selectedRecipe.strInstructions}</p>
+            </div>
+          </div>
         </section>
       )}
 
       {!selectedRecipe && recipes.length > 0 && (
-        <section className="recipe-list">
-          {recipes.map((recipe) => (
-            <div
-              key={recipe.idMeal}
-              className="recipe-card"
-              onClick={() => setSelectedRecipe(recipe)}
-            >
-              <img src={recipe.strMealThumb} alt={recipe.strMeal} />
-              <h2>{recipe.strMeal}</h2>
-            </div>
-          ))}
-        </section>
+        <>
+          <p className="results-count">
+            {recipes.length} recipe{recipes.length !== 1 ? 's' : ''} found
+          </p>
+          <section className="recipe-list">
+            {recipes.map((recipe) => (
+              <article
+                key={recipe.idMeal}
+                className="recipe-card"
+                onClick={() => setSelectedRecipe(recipe)}
+              >
+                <img src={recipe.strMealThumb} alt={recipe.strMeal} />
+                <h2>{recipe.strMeal}</h2>
+              </article>
+            ))}
+          </section>
+        </>
       )}
-    </main>
+    </div>
   )
 }
 
